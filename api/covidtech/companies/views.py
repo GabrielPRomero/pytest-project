@@ -20,7 +20,7 @@ class CompanyViewSet(ModelViewSet):
 def send_company_email(req):
     send_mail(
         subject="New company added",
-        message=f"{req.data['name']} has been added to the database",
+        message= "Added has been added to the database",
         from_email="gabrielpitaromero@gmx.com",
         recipient_list=["gabrielpitaromero@gmx.com"]
     )
