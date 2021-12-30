@@ -3,7 +3,7 @@ from fibonacci.naive import fibonacci_naive
 from fibonacci.cached import fibo_memo
 import pytest
 from typing import List, Tuple, Callable, Dict
-from conftest import time_tracker
+from fibonacci.conftest import time_tracker
 
 Decorator = Callable
 
