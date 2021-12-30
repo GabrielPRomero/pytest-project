@@ -1,3 +1,4 @@
+from typing import List
 from unittest import TestCase
 from django.test import Client
 from django.urls import reverse
@@ -32,9 +33,9 @@ def test_zero_companies_should_return_empty_list(client):
     assert res.json() == []
 
 
-@pytest.fixture
-def amazon() -> Company:
-    return Company.objects.create(name='Amazon')
+# @pytest.fixture
+# def amazon() -> Company:
+#     return Company.objects.create(name='Amazon')
 
 
 def test_one_company_exists_should_succeed(client, amazon):
@@ -100,12 +101,12 @@ def test_should_be_skipped():
     
 #---------- More about fixture test ------------
 
-@pytest.fixture()
-def company(**kwargs):
-    def _company_factory(**kwargs) -> Company:
-        company_name = kwargs.pop("name", "Test Company")
-        return Company.objects.create(name=company_name,**kwargs)
-    return _company_factory
+# @pytest.fixture()
+# def company(**kwargs):
+#     def _company_factory(**kwargs) -> Company:
+#         company_name = kwargs.pop("name", "Test Company")
+#         return Company.objects.create(name=company_name,**kwargs)
+#     return _company_factory
 
 def test_multiple_companies_exists_should_succeed(client, company):
     tiktok: Company = company(name="TikTok")
@@ -116,6 +117,25 @@ def test_multiple_companies_exists_should_succeed(client, company):
     assert len(res_content) == 2
     assert res_content[0].get("name") == tiktok.name
     assert res_content[1].get("name") == google.name
+    
+    
+# @pytest.fixture()
+# def companies(request, company) -> List[Company]:
+#     companies = []
+#     names = request.param
+#     for name in names:
+#         companies.append(company(name=name))
+#     return companies
+
+@pytest.mark.parametrize("companies", [["TikTok", "Google"], ["Facebook", "Instagram"]], indirect=True)
+def test_multiple_companies_exists_should_succeed_new(client, companies):
+    company_names = [company.name for company in companies]
+    res = client.get(companies_url)
+    res_content = res.json()
+    assert res.status_code == 200
+    assert len(res_content) == 2
+    assert res_content[0].get("name") == company_names[0]
+    assert res_content[1].get("name") == company_names[1]
 
 
 
