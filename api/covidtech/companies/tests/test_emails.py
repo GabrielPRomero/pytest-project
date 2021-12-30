@@ -1,4 +1,4 @@
-from django.test import TestCase
+from unittest import TestCase
 from django.core import mail
 from django.test import Client
 from unittest.mock import patch
