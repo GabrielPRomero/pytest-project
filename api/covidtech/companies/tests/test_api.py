@@ -32,12 +32,17 @@ def test_zero_companies_should_return_empty_list(client):
     assert res.json() == []
 
 
-def test_one_company_exists_should_succeed(client):
-    test_company = Company.objects.create(name='Amazon')
+@pytest.fixture
+def amazon() -> Company:
+    return Company.objects.create(name='Amazon')
+
+
+def test_one_company_exists_should_succeed(client, amazon):
+    # test_company = Company.objects.create(name='Amazon')
     res = client.get(companies_url)
     res_content = res.json()[0]
     assert res.status_code == 200
-    assert res_content.get("name") == test_company.name
+    assert res_content.get("name") == amazon.name
     assert res_content.get("status") == "hiring"
     assert res_content.get("application_link") == None
 
@@ -90,6 +95,41 @@ def test_should_be_ok_if_fails():
 @pytest.mark.skip
 def test_should_be_skipped():
     assert 1 == 2
+    
+    
+    
+#---------- More about fixture test ------------
+
+@pytest.fixture()
+def company(**kwargs):
+    def _company_factory(**kwargs) -> Company:
+        company_name = kwargs.pop("name", "Test Company")
+        return Company.objects.create(name=company_name,**kwargs)
+    return _company_factory
+
+def test_multiple_companies_exists_should_succeed(client, company):
+    tiktok: Company = company(name="TikTok")
+    google: Company = company(name="Google")
+    res = client.get(companies_url)
+    res_content = res.json()
+    assert res.status_code == 200
+    assert len(res_content) == 2
+    assert res_content[0].get("name") == tiktok.name
+    assert res_content[1].get("name") == google.name
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # def test_raise_covid19_exception_should_pass(self):
 #     with pytest.raises(ValueError) as e:
