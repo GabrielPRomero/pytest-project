@@ -1,3 +1,4 @@
+from fibonacci.dynamic import better_fibonacci_dynamic, fibonacci_dynamic
 from fibonacci.naive import fibonacci_naive
 from fibonacci.cached import fibo_memo
 import pytest
@@ -29,7 +30,7 @@ Decorator = Callable
 #     res = fibo_memo(n)
 #     assert res == expected
 
-@pytest.mark.parametrize("fib_func", [fibonacci_naive, fibo_memo])
+@pytest.mark.parametrize("fib_func", [fibonacci_naive, fibo_memo, fibonacci_dynamic, better_fibonacci_dynamic])
 @pytest.mark.parametrize("n, expected", [(0, 0), (1, 1), (2, 1), (3, 2), (4, 3), (5, 5), (6, 8), (7, 13), (8, 21), (9, 34)])
 def test_fibonacci(time_tracker, fib_func: Callable[[int], int], n: int, expected: int) -> None:
     res = fib_func(n)
